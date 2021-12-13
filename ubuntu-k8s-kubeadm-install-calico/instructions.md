@@ -114,3 +114,37 @@ run following command on every child node (the generated command will differ aft
 ```shell
 kubeadm join k8s-ubuntu-master.localdomain:6443 --token wgg32f.5olw3m56nnliw6fg --discovery-token-ca-cert-hash sha256:cc9d9961aa299de9ba0cb6344d61163fa9aa5656202959e7f7c54e200ae17d73
 ```
+## Credentials setup for dockerhub
+if the k8s cluster is running on containerd (without Docker IO). Surround the password with single quotes.
+```bash
+kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=rouzzlan --docker-password='8Tw9E(/Z7mDE8i^jdEB8?[' --docker-email=rouslan_kh@hotmail.com
+```
+this gives following result:
+```shell
+secret/regcred created
+```
+source [URL](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
+to verify configuration run following commands:
+```shell
+root@k8s-master-node:/home/rouslan/scripts# kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=rouzzlan --docker-password=8Tw9E(/Z7mDE8i^jdEB8?[ --docker-email=rouslan_kh@hotmail.com
+bash: syntax error near unexpected token `(' <---- USE \' TO SURROND THE PASSWORD
+root@k8s-master-node:/home/rouslan/scripts# kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username=rouzzlan --docker-password='8Tw9E(/Z7mDE8i^jdEB8?[' --docker-email=rouslan_kh@hotmail.com
+secret/regcred created
+root@k8s-master-node:/home/rouslan/scripts# kubectl get secret regcred --output=yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJyb3V6emxhbiIsInBhc3N3b3JkIjoiOFR3OUUoL1o3bURFOGleamRFQjg/WyIsImVtYWlsIjoicm91c2xhbl9raEBob3RtYWlsLmNvbSIsImF1dGgiOiJjbTkxZW5wc1lXNDZPRlIzT1VVb0wxbzNiVVJGT0dsZWFtUkZRamcvV3c9PSJ9fX0=
+kind: Secret
+metadata:
+  creationTimestamp: "2021-12-13T18:32:47Z"
+  name: regcred
+  namespace: default
+  resourceVersion: "1456"
+  uid: 67321030-8494-49ff-a0cb-671fb85e41db
+type: kubernetes.io/dockerconfigjson
+```
+check the contents of the .dockerconfigjson:
+```shell
+root@k8s-master-node:/home/rouslan/scripts# kubectl get secret regcred --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
+{"auths":{"https://index.docker.io/v1/":{"username":"rouzzlan","password":"8Tw9E(/Z7mDE8i^jdEB8?[","email":"rouslan_kh@hotmail.com","auth":"cm91enpsYW46OFR3OUUoL1o3bURFOGleamRFQjg/Ww=="}}}
+```

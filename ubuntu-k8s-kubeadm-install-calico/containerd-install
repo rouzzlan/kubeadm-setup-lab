@@ -1,4 +1,4 @@
-# shellcheck shell=bash
+#!/bin/bash
 
 if ! [ $USER = root ]; then
   echo run this script with sudo
