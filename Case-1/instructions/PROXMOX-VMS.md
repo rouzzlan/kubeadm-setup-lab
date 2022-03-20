@@ -61,7 +61,6 @@ Configure settings
 ```text
 PasswordAuthentication no
 PermitRootLogin no
-PasswordAuthentication no
 ChallengeResponseAuthentication no
 UsePAM no
 ```
