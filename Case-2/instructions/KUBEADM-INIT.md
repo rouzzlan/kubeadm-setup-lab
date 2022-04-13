@@ -162,3 +162,8 @@ root@k8s-master-node:/home/rouslan/scripts# kubectl get secret regcred --output=
 
 ## Get cluster config
 get the `config` file from `.kube` directory. for example from `/home/rouslan/.kube`.
+You can run following command from your pc:
+```shell
+scp rouslan@192.168.2.30:/home/rouslan/.kube/config ~/Downloads/pve2-prod-cluster
+```
+Replace Ip and filenames as required.
