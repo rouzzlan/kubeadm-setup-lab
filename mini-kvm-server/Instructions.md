@@ -94,19 +94,22 @@ vda    252:0    0   70G  0 disk
 
 ```
 ## <span style="color:blue">nodes setup</span>
-install some base packages
-```bash
-sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install qemu-guest-agent -y
-sudo systemctl start qemu-guest-agent.service
-```
+#### Guest servers access
+the vms are accessable with following commands
 ```bash
 ssh-copy-id 192.168.100.166 -p 22010
 ssh-copy-id 192.168.100.166 -p 22011
 ssh-copy-id 192.168.100.166 -p 22012
 ssh-copy-id 192.168.100.166 -p 22013
 ```
-Then edit settings
+#### administrative steps
+##### install some base packages
+```bash
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install qemu-guest-agent -y
+sudo systemctl start qemu-guest-agent.service
+```
+##### edit ssh settings
 ```sh
 sudo vim /etc/ssh/sshd_config
 ```
@@ -121,26 +124,7 @@ save and reload
 ```sh
 sudo systemctl restart ssh
 ```
-connect via ssh 
-```bash
-ssh rouslan@192.168.100.166 -p 22010
-ssh rouslan@192.168.100.166 -p 22011
-ssh rouslan@192.168.100.166 -p 22012
-ssh rouslan@192.168.100.166 -p 22013
-```
-## Disable swap
-
-## verification after base setup
-Verify that the br_netfilter, overlay modules are loaded by running below instructions:
-```bash
-lsmod | grep br_netfilter
-lsmod | grep overlay
-```
-Verify that the net.bridge.bridge-nf-call-iptables, net.bridge.bridge-nf-call-ip6tables, net.ipv4.ip_forward system variables are set to 1 in your sysctl config by running below instruction:
-```bash
-sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
-```
-### Disable swap
+##### Disable swap
 edit config
 ```bash
 sudo vim /etc/fstab
@@ -157,6 +141,32 @@ verify
 ```bash
 sudo swapon --show
 ```
+##### Hosts file
+Edit the hosts file on every node of the cluster.
+```bash
+sudo vim /etc/hosts
+```
+add content
+```text
+192.168.122.130 k8s-master.local
+192.168.122.131 k8s-node-1.local
+192.168.122.132 k8s-node-2.local
+192.168.122.133 k8s-node-3.local
+```
+##### Last step
+reboot the client.
+
+## verification after base setup
+Verify that the br_netfilter, overlay modules are loaded by running below instructions:
+```bash
+lsmod | grep br_netfilter
+lsmod | grep overlay
+```
+Verify that the net.bridge.bridge-nf-call-iptables, net.bridge.bridge-nf-call-ip6tables, net.ipv4.ip_forward system variables are set to 1 in your sysctl config by running below instruction:
+```bash
+sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
+```
+
 
 ```bash
 sudo kubeadm config images pull
