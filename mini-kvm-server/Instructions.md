@@ -5,7 +5,11 @@
 - <span style="color:red">Master node</span>
 - <span style="color:green">Slave node</span>
 
-## NGINX config
+
+
+## <span style="color:purple">Setup on the host</span>
+#### NGINX config
+
 ```bash
 sudo vim /etc/nginx/stream.conf.d/k8s.conf
 ```
@@ -49,6 +53,7 @@ server {
   listen 22013;
   proxy_pass k8s-node-3;
 }
+#### Firewall settings
 ```
 Open firewall ports
 ```bash
@@ -58,6 +63,18 @@ sudo firewall-cmd --permanent --zone=public --add-port=22012/tcp
 sudo firewall-cmd --permanent --zone=public --add-port=22013/tcp
 sudo firewall-cmd --reload
 ```
+#### Edit the hosts file
+```bash
+sudo vim /etc/hosts
+```
+add content
+```text
+192.168.122.130 k8s-master.local
+192.168.122.131 k8s-node-1.local
+192.168.122.132 k8s-node-2.local
+192.168.122.133 k8s-node-3.local
+```
+
 reconfigure NGINX.
 ```bash
 sudo nginx -T
@@ -76,7 +93,7 @@ vda    252:0    0   70G  0 disk
 └─vda5 252:5    0   45G  0 part /var
 
 ```
-## nodes setup
+## <span style="color:blue">nodes setup</span>
 install some base packages
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
@@ -110,17 +127,6 @@ ssh rouslan@192.168.100.166 -p 22010
 ssh rouslan@192.168.100.166 -p 22011
 ssh rouslan@192.168.100.166 -p 22012
 ssh rouslan@192.168.100.166 -p 22013
-```
-## network stting in hosts
-```bash
-sudo vim /etc/hosts
-```
-add content
-```text
-192.168.122.130 k8s-master.local
-192.168.122.131 k8s-node-1.local
-192.168.122.132 k8s-node-2.local
-192.168.122.133 k8s-node-3.local
 ```
 ## Disable swap
 

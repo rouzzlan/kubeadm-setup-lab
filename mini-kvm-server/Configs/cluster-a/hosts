@@ -1,0 +1,4 @@
+192.168.122.135 k8s-master-a.local
+192.168.122.136 k8s-node-1-a.local
+192.168.122.137 k8s-node-2-a.local
+192.168.122.138 k8s-node-3-a.local
