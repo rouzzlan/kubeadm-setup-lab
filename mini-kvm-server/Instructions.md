@@ -156,6 +156,16 @@ add content
 ##### Last step
 reboot the client.
 
+## <span style="color:blue">kubeadm setup on all nodes</span>
+login as root user
+```bash
+sudo su
+```
+run the scripts, first [base-setup](base-setup) then [containerd-install](containerd-install).
+```bash
+sh base-setup
+sh containerd-install
+```
 ## <span style="color:red">Master node setup</span>
 
 ## verification after base setup
