@@ -156,6 +156,8 @@ add content
 ##### Last step
 reboot the client.
 
+## <span style="color:red">Master node setup</span>
+
 ## verification after base setup
 Verify that the br_netfilter, overlay modules are loaded by running below instructions:
 ```bash
