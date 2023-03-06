@@ -6,9 +6,11 @@ conf_template = ""
 [plugins."io.containerd.grpc.v1.cri".registry]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
-endpoint = ["https://registry-1.docker.io"]
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors."test.http-registry.io"]
-endpoint = ["http://v048011.dom600.lab:5000"]
+    endpoint = ["https://registry-1.docker.io"]
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker-mirror.localdomain"]
+    endpoint = ["https://docker-mirror.localdomain"]
 [plugins."io.containerd.grpc.v1.cri".registry.configs]
-[plugins."io.containerd.grpc.v1.cri".registry.configs."test.http-registry.io".tls]
-insecure_skip_verify = true
+    [plugins."io.containerd.grpc.v1.cri".registry.configs."docker-mirror.localdomain".tls]
+        insecure_skip_verify = true
+    [plugins."io.containerd.grpc.v1.cri".registry.configs."docker-repo.localdomain".tls]
+        insecure_skip_verify = true
