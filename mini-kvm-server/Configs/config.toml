@@ -12,5 +12,7 @@ conf_template = ""
 [plugins."io.containerd.grpc.v1.cri".registry.configs]
     [plugins."io.containerd.grpc.v1.cri".registry.configs."docker-mirror.localdomain".tls]
         insecure_skip_verify = true
+        ca_file = "/var/registry-certs/mirror/server.crt"
     [plugins."io.containerd.grpc.v1.cri".registry.configs."docker-repo.localdomain".tls]
         insecure_skip_verify = true
+        ca_file = "/var/registry-certs/registry/server.crt"
