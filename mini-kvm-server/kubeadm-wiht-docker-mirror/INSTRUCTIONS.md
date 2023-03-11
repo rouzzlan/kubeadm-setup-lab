@@ -93,10 +93,32 @@ add content
 192.168.122.23 local-harbour-repo.net
 ```
 
+```bash
+mkdir -p /etc/docker/certs.d/local-harbour-repo.net
+```
+3 files should be added as in this scheme.
+```text
+/etc/docker/certs.d/
+    └── yourdomain.com:port
+       ├── yourdomain.com.cert  <-- Server certificate signed by CA
+       ├── yourdomain.com.key   <-- Server key signed by CA
+       └── ca.crt               <-- Certificate authority that signed the registry certificate
+```
+files 
+```text
+/etc/docker/certs.d
+└── local-harbour-repo.net
+    ├── ca.crt
+    ├── local-harbour-repo.net.cert
+    └── local-harbour-repo.net.key
 
+1 directory, 3 files
+```
+next step is running install scripts
+### <span style="color:blue">Setup scripts</span>
 install docker
 ```bash
-sudo sh 1-script.sh
+sudo sh 1-docker-install.sh
 ```
 install docker tools
 ```bash
@@ -111,6 +133,17 @@ install kubeadm
 ```bash
 sudo sh 3-script.sh
 ```
+### <span style="color:blue">Mirror and repo check</span>
+verify connections with repo and mirror</br>
+repo
+```bash
+docker login local-harbour-repo.net
+```
+mirror
+```bash
+curl http://mirror.local:5000/v2/_catalog
+```
+### <span style="color:blue">Preparation</span>
 pull images
 ```bash
 sudo kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock
