@@ -85,17 +85,26 @@ sudo vim /etc/hosts
 ```
 add content
 ```text
-192.168.122.135 k8s-master.local
-192.168.122.136 k8s-node-1.local
-192.168.122.137 k8s-node-2.local
-192.168.122.138 k8s-node-3.local
-192.168.122.11 mirror.local
-192.168.122.23 local-harbour-repo.net
+192.168.122.135 k8s-master-a.local
+192.168.122.136 k8s-node-1-a.local
+192.168.122.137 k8s-node-2-a.local
+192.168.122.138 k8s-node-3-a.local
+192.168.122.11  mirror.local
+192.168.122.23  local-harbour-repo.net
 ```
-
+disable swap
 ```bash
-mkdir -p /etc/docker/certs.d/local-harbour-repo.net
+sudo vim /etc/fstab 
 ```
+and comment out swap and disable in completely.
+```bash
+sudo swapoff -a
+```
+create repo certs folder.
+```bash
+sudo mkdir -p /etc/docker/certs.d/local-harbour-repo.net && cd /etc/docker/certs.d/local-harbour-repo.net
+```
+then return back to `/home`.
 3 files should be added as in this scheme.
 ```text
 /etc/docker/certs.d/
@@ -128,12 +137,17 @@ verify
 ```bash
 cri-dockerd --version
 sudo docker system info
+sudo systemctl status crio
+systemctl status docker
 ```
 install kubeadm
 ```bash
 sudo sh 3-script.sh
 ```
 ### <span style="color:blue">Mirror and repo check</span>
+```bash
+sudo usermod -aG docker rouslan
+```
 verify connections with repo and mirror</br>
 repo
 ```bash
@@ -149,12 +163,13 @@ pull images
 sudo kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock
 ```
 ## <span style="color:red">Master node</span>
+### <span style="color:red">Init cluster</span>
 setup cluster
 ```bash
 sudo kubeadm init \
   --pod-network-cidr=10.244.0.0/16 \
   --cri-socket unix:///var/run/cri-dockerd.sock \
-  --control-plane-endpoint=k8s-master.local
+  --control-plane-endpoint=k8s-master-a.local
 ```
 add user acces to kubeadm cluster
 ```bash
@@ -166,9 +181,66 @@ for admin
 ```bash
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
+#### <span style="color:red">Network setup</span>
+use Weave
+```bash
+kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+```
 ## <span style="color:green">Slave node</span>
 The connection script is generated run it on every node.
 ```bash
-kubeadm join k8s-master.local:6443 --token vm7599.9vy09uslchlhgokf \
-	--discovery-token-ca-cert-hash sha256:1c035525daad49764394b25114ee51bb647945cf88a3b2d93cef2c1480986f68 
+kubeadm join k8s-master-a.local:6443 --token wx3a9z.pgwh21tf2duo65oc \
+	--discovery-token-ca-cert-hash sha256:9aa3f988a22a58d2197bb2bf4d2b131d0504a769d0a865b8f063ce5f8f22b1af \
+	--cri-socket unix:///var/run/cri-dockerd.sock
+```
+the extra parameter is very important, don't forget `--cri-socket unix:///var/run/cri-dockerd.sock` it has to be added.
+
+## Other steps
+
+### swap
+```bash
+cat /proc/swaps
+swapon -s
+```
+
+### config files
+```bash
+cat /root/.docker/config.json
+``` 
+
+```json
+{
+  "auths": {
+    "local-harbour-repo.net": {
+      "auth": "cm91c2xhbjo1MG05RmlEMw=="
+    }
+  }
+}
+```
+```bash
+echo -n 'cm91c2xhbjo1MG05RmlEMw==' | base64 --decode
+```
+output
+```text
+rouslan:50m9FiD3
+```
+
+### docker user permission
+add to docker group.
+```bash
+usermod -aG docker $USER
+```
+and restart.
+#### special situation
+```bash
+sudo groupadd docker
+sudo groupadd docker
+```
+disk usage
+```bash
+df -h
+```
+
+```bash
+sudo swapon --show
 ```

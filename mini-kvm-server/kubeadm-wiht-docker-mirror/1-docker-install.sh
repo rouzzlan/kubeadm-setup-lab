@@ -13,6 +13,19 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt update
 sudo apt install -y containerd.io docker-ce docker-ce-cli
 
+sudo tee /etc/docker/daemon.json <<EOF
+{
+  "registry-mirrors": [
+	    "http://mirror.local:5000"
+    ],
+    "insecure-registries" : [
+	    "http://mirror.local:5000",
+	    "https://local-harbour-repo.net"
+    ]
+}
+EOF
+
+
 # Start and enable Services
 sudo systemctl daemon-reload
 sudo systemctl restart docker
