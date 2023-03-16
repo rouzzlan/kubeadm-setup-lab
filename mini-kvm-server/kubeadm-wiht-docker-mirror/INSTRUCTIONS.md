@@ -244,3 +244,31 @@ df -h
 ```bash
 sudo swapon --show
 ```
+
+## <span style="color:blue">pod deployment test</span>
+tested wit `nginx:1.21.6-alpine`-image that was stored locally.
+tagged and pushed the image
+```bash
+docker tag nginx:1.21.6-alpine local-harbour-repo.net/library/nginx:1.21.6-alpine
+docker push local-harbour-repo.net/library/nginx:1.21.6-alpine
+```
+save contents of the yaml file to `pod.yaml`.
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: local-harbour-repo.net/library/nginx:1.21.6-alpine
+```
+on the master node run
+```bash
+kubectl apply -f pod.yaml
+```
+verify with 
+```bash
+kubectl describe pod nginx
+kubectl describe pod nginx
+```
