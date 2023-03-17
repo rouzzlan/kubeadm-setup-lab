@@ -12,57 +12,62 @@ sudo vim /etc/hosts
 ```
 add content
 ```text
-# k8s cluster a
-192.168.122.135 k8s-master-a.local
-192.168.122.136 k8s-node-1-a.local
-192.168.122.137 k8s-node-2-a.local
-192.168.122.138 k8s-node-3-a.local
+# k8s cluster b
+192.168.122.90  k8s-b-master.local
+192.168.122.91  k8s-b-node-1.local
+192.168.122.92  k8s-b-node-2.local
+192.168.122.93  k8s-b-node-3.local
 
 ```
 ### <span style="color:purple">configure NGINX</span>
 ```bash
-sudo vim /etc/nginx/stream.conf.d/k8s-a.conf
+sudo vim /etc/nginx/stream.conf.d/k8s-b.conf
 ```
 
 ```text
-upstream k8s-master-a {
-  server k8s-master-a.local:22;
+upstream k8s-b-master {
+  server k8s-b-master.local:22;
 }
 
 server {
-  listen 22020;
-  proxy_pass k8s-master-a;
+  listen 22030;
+  proxy_pass k8s-b-master;
 }
 
 
-upstream k8s-node-1-a {
-  server k8s-node-1-a.local:22;
-}
-
-server {
-  listen 22021;
-  proxy_pass k8s-node-1-a;
-}
-
-
-upstream k8s-node-2-a {
-  server k8s-node-2-a.local:22;
+upstream k8s-b-node-1 {
+  server k8s-b-node-1.local:22;
 }
 
 server {
-  listen 22022;
-  proxy_pass k8s-node-2-a;
+  listen 22031;
+  proxy_pass k8s-b-node-1;
 }
 
 
-upstream k8s-node-3-a {
-  server k8s-node-3-a.local:22;
+upstream k8s-b-node-2 {
+  server k8s-b-node-2.local:22;
 }
 
 server {
-  listen 22023;
-  proxy_pass k8s-node-3-a;
+  listen 22032;
+  proxy_pass k8s-b-node-2;
 }
+
+
+upstream k8s-b-node-3 {
+  server k8s-b-node-3.local:22;
+}
+
+server {
+  listen 22033;
+  proxy_pass k8s-b-node-3;
+}
+```
+open ports
+```bash
+firewall-cmd --add-port=22030-22033/tcp --permanent
+firewall-cmd --reload
 ```
 Reconfigure NGINX
 ```bash
@@ -85,16 +90,16 @@ sudo vim /etc/hosts
 ```
 add content
 ```text
-192.168.122.135 k8s-master-a.local
-192.168.122.136 k8s-node-1-a.local
-192.168.122.137 k8s-node-2-a.local
-192.168.122.138 k8s-node-3-a.local
+192.168.122.90  k8s-b-master.local
+192.168.122.91  k8s-b-node-1.local
+192.168.122.92  k8s-b-node-2.local
+192.168.122.93  k8s-b-node-3.local
 192.168.122.11  mirror.local
 192.168.122.23  local-harbour-repo.net
 ```
 disable swap
 ```bash
-sudo vim /etc/fstab 
+sudo vim /etc/fstab
 ```
 and comment out swap and disable in completely.
 ```bash
@@ -160,7 +165,7 @@ curl http://mirror.local:5000/v2/_catalog
 ### <span style="color:blue">Preparation</span>
 pull images
 ```bash
-sudo kubeadm config images pull --cri-socket unix:///var/run/cri-dockerd.sock
+sudo kubeadm config images pull --cri-socket unix:///var/run/containerd/containerd.sock
 ```
 ## <span style="color:red">Master node</span>
 ### <span style="color:red">Init cluster</span>
@@ -168,8 +173,8 @@ setup cluster
 ```bash
 sudo kubeadm init \
   --pod-network-cidr=10.244.0.0/16 \
-  --cri-socket unix:///var/run/cri-dockerd.sock \
-  --control-plane-endpoint=k8s-master-a.local
+  --cri-socket unix:///var/run/containerd/containerd.sock \
+  --control-plane-endpoint=k8s-master-b.local
 ```
 add user acces to kubeadm cluster
 ```bash
@@ -191,9 +196,9 @@ The connection script is generated run it on every node.
 ```bash
 kubeadm join k8s-master-a.local:6443 --token wx3a9z.pgwh21tf2duo65oc \
 	--discovery-token-ca-cert-hash sha256:9aa3f988a22a58d2197bb2bf4d2b131d0504a769d0a865b8f063ce5f8f22b1af \
-	--cri-socket unix:///var/run/cri-dockerd.sock
+	--cri-socket unix:///var/run/containerd/containerd.sock
 ```
-the extra parameter is very important, don't forget `--cri-socket unix:///var/run/cri-dockerd.sock` it has to be added.
+the extra parameter is very important, don't forget `--cri-socket unix:///var/run/containerd/containerd.sock` it has to be added.
 
 ## Other steps
 

@@ -5,4 +5,4 @@ metadata:
 spec:
   containers:
     - name: nginx
-      image: nginx
+      image: local-harbour-repo.net/library/nginx:1.21.6-alpine
