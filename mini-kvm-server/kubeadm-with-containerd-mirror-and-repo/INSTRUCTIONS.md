@@ -66,8 +66,8 @@ server {
 ```
 open ports
 ```bash
-firewall-cmd --add-port=22030-22033/tcp --permanent
-firewall-cmd --reload
+sudo firewall-cmd --add-port=22030-22033/tcp --permanent
+sudo firewall-cmd --reload
 ```
 Reconfigure NGINX
 ```bash
@@ -105,47 +105,19 @@ and comment out swap and disable in completely.
 ```bash
 sudo swapoff -a
 ```
-create repo certs folder.
-```bash
-sudo mkdir -p /etc/docker/certs.d/local-harbour-repo.net && cd /etc/docker/certs.d/local-harbour-repo.net
-```
-then return back to `/home`.
-3 files should be added as in this scheme.
-```text
-/etc/docker/certs.d/
-    └── yourdomain.com:port
-       ├── yourdomain.com.cert  <-- Server certificate signed by CA
-       ├── yourdomain.com.key   <-- Server key signed by CA
-       └── ca.crt               <-- Certificate authority that signed the registry certificate
-```
-files 
-```text
-/etc/docker/certs.d
-└── local-harbour-repo.net
-    ├── ca.crt
-    ├── local-harbour-repo.net.cert
-    └── local-harbour-repo.net.key
-
-1 directory, 3 files
-```
 next step is running install scripts
 ### <span style="color:blue">Setup scripts</span>
-install docker
+install containerd
 ```bash
-sudo sh 1-docker-install.sh
+sudo sh 1-containerd-install.sh
 ```
-install docker tools
-```bash
-sudo sh 2-script.sh
-```
-verify
-```bash
-cri-dockerd --version
-sudo docker system info
-sudo systemctl status crio
-systemctl status docker
-```
+configure repo and mirror</br>
+[instructions](conf/setup.md)</br>
 install kubeadm
+```bash
+sudo sh 2-kubeadm-install.sh
+```
+configure network
 ```bash
 sudo sh 3-script.sh
 ```
@@ -174,7 +146,7 @@ setup cluster
 sudo kubeadm init \
   --pod-network-cidr=10.244.0.0/16 \
   --cri-socket unix:///var/run/containerd/containerd.sock \
-  --control-plane-endpoint=k8s-master-b.local
+  --control-plane-endpoint=k8s-b-master.local
 ```
 add user acces to kubeadm cluster
 ```bash
@@ -194,9 +166,8 @@ kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/we
 ## <span style="color:green">Slave node</span>
 The connection script is generated run it on every node.
 ```bash
-kubeadm join k8s-master-a.local:6443 --token wx3a9z.pgwh21tf2duo65oc \
-	--discovery-token-ca-cert-hash sha256:9aa3f988a22a58d2197bb2bf4d2b131d0504a769d0a865b8f063ce5f8f22b1af \
-	--cri-socket unix:///var/run/containerd/containerd.sock
+kubeadm join k8s-b-master.local:6443 --token p006hk.aqz16aws6nlkg52m \
+	--discovery-token-ca-cert-hash sha256:02261481cbf6b35244fdbff4cfd9c5a48340f4937362fec4b4ecedeac8d5e281
 ```
 the extra parameter is very important, don't forget `--cri-socket unix:///var/run/containerd/containerd.sock` it has to be added.
 

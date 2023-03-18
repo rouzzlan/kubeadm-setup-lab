@@ -29,7 +29,35 @@ verify
 ctr images pull --hosts-dir "/etc/containerd/certs.d" docker.io/weaveworks/weave-kube:latest
 ```
 
+### Simple (default) Host Config for Docker
+Here is a simple example for a default registry hosts configuration. Set
+`config_path = "/etc/containerd/certs.d"` in your config.toml for containerd.
+Make a directory tree at the config path that includes `docker.io` as a directory
+representing the host namespace to be configured. 
+```bash
+mkdir -p /etc/containerd/certs.d/docker.io && cd /etc/containerd/certs.d/docker.io
+```
+
+Then add a `hosts.toml` file
+in the `docker.io` to configure the host namespace. It should look like this:
+
+```
+$ tree /etc/containerd/certs.d
+/etc/containerd/certs.d
+└── docker.io
+    └── hosts.toml
+
+$ cat /etc/containerd/certs.d/docker.io/hosts.toml
+server = "https://docker.io"
+
+[host."https://registry-1.docker.io"]
+  capabilities = ["pull", "resolve"]
+```
+
 ### Default mirror for all repo's
+```bash
+mkdir -p /etc/containerd/certs.d/_default && cd /etc/containerd/certs.d/_default
+```
 ```text
 $ tree /etc/containerd/certs.d
 /etc/containerd/certs.d
@@ -38,10 +66,11 @@ $ tree /etc/containerd/certs.d
 ```
 contents of file `/etc/containerd/certs.d/_default/hosts.toml` located in `default` folder.
 ```toml
-server = "http://mirror.local:5000"
+server = "https://registry-1.docker.io"
 
 [host."http://mirror.local:5000"]
   capabilities = ["pull", "resolve"]
+  skip_verify = true
 ```
 ### private registry (operational)
 ```bash
@@ -113,6 +142,8 @@ config file (`/etc/containerd/config.toml`)
         auth = "cm91c2xhbjo1MG05RmlEMw=="
 
 [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."local-harbour-repo.net"]
+        endpoint = ["https://local-harbour-repo.net"]
     [plugins."io.containerd.grpc.v1.cri".registry.mirrors."local-harbour-repo.net"]
         endpoint = ["https://local-harbour-repo.net"]
 ```
