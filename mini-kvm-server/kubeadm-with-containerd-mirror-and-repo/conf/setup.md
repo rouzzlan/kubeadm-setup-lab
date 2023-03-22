@@ -64,13 +64,36 @@ $ tree /etc/containerd/certs.d
 └── _default
     └── hosts.toml
 ```
+### setup for registry.k8s.io
+```bash
+mkdir -p /etc/containerd/certs.d/registry.k8s.io && cd /etc/containerd/certs.d/registry.k8s.io
+```
+```text
+$ tree /etc/containerd/certs.d
+/etc/containerd/certs.d
+└── registry.k8s.io
+    └── hosts.toml
+```
 contents of file `/etc/containerd/certs.d/_default/hosts.toml` located in `default` folder.
 ```toml
-server = "https://registry-1.docker.io"
+server = "https://registry.k8s.io"
 
-[host."http://mirror.local:5000"]
+[host."https://registry.k8s.io"]
   capabilities = ["pull", "resolve"]
-  skip_verify = true
+```
+containers used for kubeadm
+```text
+REPOSITORY                                TAG       IMAGE ID       CREATED         SIZE
+registry.k8s.io/kube-apiserver            v1.26.2   63d3239c3c15   3 weeks ago     134MB
+registry.k8s.io/kube-scheduler            v1.26.2   db8f409d9a5d   3 weeks ago     56.3MB
+registry.k8s.io/kube-controller-manager   v1.26.2   240e201d5b0d   3 weeks ago     123MB
+registry.k8s.io/kube-proxy                v1.26.2   6f64e7135a6e   3 weeks ago     65.6MB
+registry.k8s.io/etcd                      3.5.6-0   fce326961ae2   3 months ago    299MB
+registry.k8s.io/pause                     3.9       e6f181688397   5 months ago    744kB
+registry.k8s.io/coredns/coredns           v1.9.3    5185b96f0bec   9 months ago    48.8MB
+registry.k8s.io/pause                     3.6       6270bb605e12   19 months ago   683kB
+weaveworks/weave-npc                      latest    690c3345cc9c   2 years ago     39.3MB
+weaveworks/weave-kube                     latest    62fea85d6052   2 years ago     89MB
 ```
 ### private registry (operational)
 ```bash
