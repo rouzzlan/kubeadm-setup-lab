@@ -31,6 +31,16 @@ sudo kubeadm init \
   --cri-socket unix:///var/run/cri-dockerd.sock \
   --control-plane-endpoint=k8s-a-master-node.739.net
 ```
+run as `regular user`
+```bash
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
+login back as `root`
+```bash
+export KUBECONFIG=/etc/kubernetes/admin.conf
+```
 connect nodes to the master node
 ```bash
 kubeadm join k8s-a-master-node.739.net:6443 --token nzibkj.688a2k8jbk7pq8tw \
