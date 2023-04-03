@@ -94,7 +94,7 @@ add content
 ```
 disable swap
 ```bash
-sudo vim /etc/fstab 
+sudo vim /etc/fstab
 ```
 and comment out swap and disable in completely.
 ```bash
