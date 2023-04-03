@@ -17,11 +17,9 @@ sudo tee /etc/docker/daemon.json <<EOF
 {
   "registry-mirrors": [
             "http://mirrors.739.net:5000",
-            "http://mirrors.739.net:5002"
     ],
     "insecure-registries" : [
             "http://mirrors.739.net:5000",
-            "http://mirrors.739.net:5002",
             "https://harbour.739.net"
     ]
 }
