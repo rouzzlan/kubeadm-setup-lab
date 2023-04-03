@@ -16,7 +16,7 @@ sudo apt install -y containerd.io docker-ce docker-ce-cli
 sudo tee /etc/docker/daemon.json <<EOF
 {
   "registry-mirrors": [
-            "http://mirrors.739.net:5000",
+            "http://mirrors.739.net:5000"
     ],
     "insecure-registries" : [
             "http://mirrors.739.net:5000",
