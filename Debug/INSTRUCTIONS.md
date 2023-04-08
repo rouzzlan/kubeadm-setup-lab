@@ -1,5 +1,5 @@
 # Debug network from pod
-create yaml file and deploy
+create yaml file and deploy `pod.yaml`
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -16,6 +16,10 @@ spec:
       imagePullPolicy: IfNotPresent
       name: ubuntu
   restartPolicy: Always
+```
+deploy
+```bash
+kubectl apply -f pod.yaml
 ```
 enter the pod's shell
 ```bash
