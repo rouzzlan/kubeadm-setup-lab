@@ -1,14 +1,15 @@
 #!/bin/bash
 
-if ! [ $USER = root ]; then
+if ! [ "$USER" = root ]; then
   echo run this script with sudo
   exit 3
 fi
 
-sudo mkdir -p /etc/docker/certs.d/harbour.739.net
-
-
-sudo mkdir -p /etc/containerd/certs.d/{harbour.739.net,_default,registry.k8s.io,docker.io}
+sudo mkdir -p /etc/containerd/certs.d/
+sudo mkdir /etc/containerd/certs.d/harbour.739.net
+sudo mkdir /etc/containerd/certs.d/_default
+sudo mkdir /etc/containerd/certs.d/registry.k8s.io
+sudo mkdir /etc/containerd/certs.d/docker.io
 
 
 sudo tee /etc/containerd/certs.d/_default/hosts.toml <<EOF
@@ -76,6 +77,7 @@ server = "https://harbour.739.net"
     capabilities = ["pull", "resolve"]
     ca = ["/etc/containerd/certs.d/harbour.739.net/ca.crt"]
 EOF
+
 
 
 sudo systemctl restart containerd

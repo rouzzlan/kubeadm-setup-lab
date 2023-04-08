@@ -248,3 +248,19 @@ verify with
 kubectl describe pod nginx
 kubectl describe pod nginx
 ```
+
+## Notes
+
+```text
+/etc/containerd/certs.d/
+├── _default
+│   └── hosts.toml
+├── docker.io
+│   └── hosts.toml
+├── harbour.739.net
+│   ├── ca.crt
+│   └── hosts.toml
+└── registry.k8s.io
+    └── hosts.toml
+
+```
