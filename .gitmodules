@@ -1,0 +1,3 @@
+[submodule "SETUP-SCRIPTS/kubeadm-setup-scripts"]
+	path = SETUP-SCRIPTS/kubeadm-setup-scripts
+	url = ssh://git@gitea.localdomain:22002/rouslan/kubeadm-setup-scripts.git
