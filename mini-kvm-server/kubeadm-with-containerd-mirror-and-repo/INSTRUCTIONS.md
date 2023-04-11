@@ -81,8 +81,7 @@ sudo systemctl status nginx
 ### <span style="color:blue">install some base packages</span>
 ```bash
 sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install qemu-guest-agent -y
-sudo systemctl start qemu-guest-agent.service
+sudo apt-get install qemu-guest-agent -y && sudo systemctl start qemu-guest-agent.service
 ```
 ### <span style="color:blue">Hosts file</span>
 ```bash
